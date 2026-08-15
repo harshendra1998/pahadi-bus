@@ -89,9 +89,9 @@ const lastSent = new Map();
 const ipOf = (req) => String(req.socket.remoteAddress ?? '').replace(/^::ffff:/, '');
 
 /* Once the socket lives on its own host it answers the whole internet, so
-   say which pages may open it. Set ALLOWED_ORIGINS on Render to your
-   Firebase domains, comma separated. Localhost is always allowed so `npm
-   start` and the tests work with nothing configured.
+   say which pages may open it. This list is only for CROSS-origin pages —
+   the Firebase domains, comma separated, set as ALLOWED_ORIGINS on Render.
+   A page served by this server is same-origin and never needs listing.
 
    This stops other websites from opening a socket in a visitor's browser.
    It is not authentication — a script outside a browser can send any
@@ -105,20 +105,29 @@ const ALLOWED = [
     .filter(Boolean),
 ];
 
-const originOk = (origin) => {
+const originOk = (origin, host) => {
   if (!origin) return true; // non-browser client; no Origin header to check
+  let url;
   try {
-    const { protocol, hostname } = new URL(origin);
-    // Compare parsed parts, never a prefix: "https://evil-pahadi-bus.com"
-    // starts with nothing useful, but "https://pahadi-bus.web.app.evil.com"
-    // would sail through a startsWith() check.
-    return ALLOWED.some((a) => {
-      const u = new URL(a);
-      return u.protocol === protocol && u.hostname === hostname;
-    });
+    url = new URL(origin);
   } catch {
     return false;
   }
+
+  /* Same origin always passes. This server also serves the page, so when
+     it is reached directly its own address is the Origin the browser
+     sends — requiring that to be configured means the site refuses its
+     own chat until someone remembers an env var. Compared including port,
+     so localhost:8123 and localhost:5500 stay distinct. */
+  if (host && url.host === host) return true;
+
+  // Cross-origin (the page on Firebase, socket here) must be listed.
+  // Compared as parsed parts, never a prefix: "https://pahadi-bus.web.app
+  // .evil.com" would sail straight through a startsWith() check.
+  return ALLOWED.some((a) => {
+    const u = new URL(a);
+    return u.protocol === url.protocol && u.hostname === url.hostname;
+  });
 };
 
 const clean = (value, max) =>
@@ -132,7 +141,7 @@ const broadcast = (msg) => wss.clients.forEach((c) => send(c, msg));
 const announceCount = () => broadcast({ type: 'presence', count: wss.clients.size });
 
 wss.on('connection', (ws, req) => {
-  if (!originOk(req.headers.origin)) {
+  if (!originOk(req.headers.origin, req.headers.host)) {
     ws.close(1008, 'origin not allowed');
     return;
   }

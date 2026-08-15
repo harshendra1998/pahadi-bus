@@ -151,9 +151,15 @@ a.close();
 /* Origin allowlist. The socket is publicly reachable once it lives on its
    own host, so only the configured pages may open one. Compared as parsed
    host + protocol, never as a prefix — a lookalike domain must not pass. */
-const origin = (value) =>
+const origin = (value, host) =>
   new Promise((resolve) => {
-    const ws = new WebSocket('ws://localhost:8199', { origin: value });
+    const ws = new WebSocket('ws://localhost:8199', {
+      origin: value,
+      // Overriding Host lets us reproduce a deployed hostname against the
+      // local server, which is the only way to test the same-origin rule
+      // without one of localhost/web.app doing the work for us.
+      ...(host ? { headers: { Host: host } } : {}),
+    });
     // A refusal closes the socket; an accepted one sends `hello` first.
     ws.on('message', () => {
       ws.close();
@@ -165,6 +171,23 @@ const origin = (value) =>
 
 assert.equal(await origin('https://pahadi-bus.web.app'), 'accepted', 'configured origin allowed');
 assert.equal(await origin('http://localhost:8123'), 'accepted', 'localhost always allowed');
+/* Same origin: the page served by this very server, on a host nobody
+   configured. Missing this is what made the deployed site refuse its own
+   chat — the Render address is neither localhost nor in ALLOWED_ORIGINS.
+   Note the host below is deliberately absent from both, or one of those
+   rules would pass the test for the wrong reason. */
+assert.equal(
+  await origin('https://pahadi-bus.onrender.com', 'pahadi-bus.onrender.com'),
+  'accepted',
+  'a server must always allow the page it serves itself',
+);
+
+// Same host, but the browser came from somewhere else. Still cross-origin.
+assert.equal(
+  await origin('https://evil.example', 'pahadi-bus.onrender.com'),
+  'refused',
+  'matching Host must not launder a foreign Origin',
+);
 assert.equal(await origin('https://evil.example'), 'refused', 'unknown origin refused');
 assert.equal(
   await origin('https://pahadi-bus.web.app.evil.example'),
