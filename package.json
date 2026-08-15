@@ -1,0 +1,16 @@
+{
+  "name": "pahadi-bus",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20.11.0"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "tracks": "node scripts/build-tracks.mjs",
+    "test": "node test-chat.mjs"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}

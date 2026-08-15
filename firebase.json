@@ -1,0 +1,33 @@
+{
+  "hosting": {
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**",
+      "server.js",
+      "test-chat.mjs",
+      "package.json",
+      "package-lock.json",
+      "scripts/**",
+      "server.log",
+      "index2.html",
+      "assets/desibus.png",
+      "assets/assets/*.png"
+    ],
+    "headers": [
+      {
+        "source": "**/*.@(webp|svg|png|jpg)",
+        "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+      },
+      {
+        "source": "/@(app.js|styles.css|tracks.json)",
+        "headers": [{ "key": "Cache-Control", "value": "public, max-age=3600" }]
+      },
+      {
+        "source": "/index.html",
+        "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
+      }
+    ]
+  }
+}

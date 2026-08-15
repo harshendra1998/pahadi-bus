@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <defs>
+    <!-- Gradients for the main rubber tyre body -->
+    <radialGradient id="tyreBody" cx="50%" cy="50%" r="50%" fx="42%" fy="42%">
+      <stop offset="0%" stop-color="#493C39" />
+      <stop offset="65%" stop-color="#312624" />
+      <stop offset="90%" stop-color="#241B1A" />
+      <stop offset="100%" stop-color="#181111" />
+    </radialGradient>
+    
+    <!-- Gradients for the metallic rim structure -->
+    <radialGradient id="rimOuter" cx="50%" cy="50%" r="50%">
+      <stop offset="85%" stop-color="#4B3632" />
+      <stop offset="97%" stop-color="#352522" />
+      <stop offset="100%" stop-color="#1C1311" />
+    </radialGradient>
+    
+    <!-- Deep bowl part of the inner rim -->
+    <radialGradient id="rimInner" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+      <stop offset="0%" stop-color="#211514" />
+      <stop offset="70%" stop-color="#422F2C" />
+      <stop offset="100%" stop-color="#170F0E" />
+    </radialGradient>
+    
+    <!-- Central raised hub where the lug nuts attach -->
+    <radialGradient id="hub" cx="50%" cy="50%" r="50%" fx="45%" fy="45%">
+      <stop offset="0%" stop-color="#5B423D" />
+      <stop offset="55%" stop-color="#44302C" />
+      <stop offset="90%" stop-color="#2B1D1B" />
+      <stop offset="100%" stop-color="#1A100F" />
+    </radialGradient>
+    
+    <!-- Center cap covering the axle -->
+    <radialGradient id="cap" cx="50%" cy="50%" r="50%" fx="42%" fy="42%">
+      <stop offset="0%" stop-color="#604741" />
+      <stop offset="65%" stop-color="#3C2A26" />
+      <stop offset="100%" stop-color="#1A110F" />
+    </radialGradient>
+    
+    <!-- Drop shadow filter to give depth to the hub and lug nuts -->
+    <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="3" stdDeviation="4" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+    
+    <!-- Standard blur for smooth shading/highlights -->
+    <filter id="softBlur" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur stdDeviation="4"/>
+    </filter>
+  </defs>
+
+  <!-- 1. Main Tyre Background (Rubber part) -->
+  <circle cx="250" cy="250" r="240" fill="url(#tyreBody)" />
+
+  <!-- 2. Tyre highlights and grooves -->
+  <circle cx="250" cy="250" r="195" fill="none" stroke="#40322E" stroke-width="25" opacity="0.5" filter="url(#softBlur)" />
+  <circle cx="250" cy="250" r="165" fill="none" stroke="#140D0C" stroke-width="12" opacity="0.7" filter="url(#softBlur)" />
+  
+  <!-- Outer tyre edge highlight -->
+  <path d="M 50 250 A 200 200 0 0 1 450 250" fill="none" stroke="#524340" stroke-width="4" opacity="0.3" filter="url(#softBlur)" />
+
+  <!-- 3. Outer Rim Edge -->
+  <circle cx="250" cy="250" r="150" fill="url(#rimOuter)" />
+  <!-- Deep shadow sitting right inside the outer rim -->
+  <circle cx="250" cy="250" r="142" fill="none" stroke="#120A09" stroke-width="16" opacity="0.8" filter="url(#softBlur)" />
+  <!-- Sharp highlight on the rim lip -->
+  <circle cx="250" cy="250" r="149" fill="none" stroke="#6C514A" stroke-width="2" opacity="0.7" />
+
+  <!-- 4. Inner Rim Bowl -->
+  <circle cx="250" cy="250" r="125" fill="url(#rimInner)" />
+  
+  <!-- Rim Transition line -->
+  <circle cx="250" cy="250" r="125" fill="none" stroke="#251817" stroke-width="4" opacity="0.8"/>
+
+  <!-- 5. Rim Slots (Ventilation holes around the rim) -->
+  <!-- Circumference at r=105 is ~659.7. Divided by 6 holes = ~110. Array: 30 solid, 80 space -->
+  <g opacity="0.9">
+    <!-- Deep shadow inside the vent holes -->
+    <circle cx="250" cy="250" r="105" fill="none" stroke="#0A0605" stroke-width="15" stroke-dasharray="35 74.9" stroke-linecap="round" />
+    <circle cx="250" cy="250" r="105" fill="none" stroke="#170F0E" stroke-width="12" stroke-dasharray="35 74.9" stroke-linecap="round" />
+  </g>
+
+  <!-- 6. Central Hub (Where the wheel attaches to the axle) -->
+  <circle cx="250" cy="250" r="75" fill="url(#hub)" filter="url(#dropShadow)" />
+  <!-- Hub inner ring detail -->
+  <circle cx="250" cy="250" r="68" fill="none" stroke="#332421" stroke-width="3" opacity="0.6" />
+
+  <!-- 7. Lug Nuts (6 standard heavy-duty nuts) -->
+  <!-- Placed uniformly around a radius of 50px from center -->
+  <g fill="#2B1D1A" filter="url(#dropShadow)">
+    <circle cx="250" cy="200" r="8" />
+    <circle cx="293.3" cy="225" r="8" />
+    <circle cx="293.3" cy="275" r="8" />
+    <circle cx="250" cy="300" r="8" />
+    <circle cx="206.7" cy="275" r="8" />
+    <circle cx="206.7" cy="225" r="8" />
+  </g>
+  <!-- Lug Nut Highlights to make them pop/look 3D -->
+  <g fill="#5F4741">
+    <circle cx="249" cy="198.5" r="3.5" />
+    <circle cx="292.3" cy="223.5" r="3.5" />
+    <circle cx="292.3" cy="273.5" r="3.5" />
+    <circle cx="249" cy="298.5" r="3.5" />
+    <circle cx="205.7" cy="273.5" r="3.5" />
+    <circle cx="205.7" cy="223.5" r="3.5" />
+  </g>
+
+  <!-- 8. Center Axle Cap -->
+  <circle cx="250" cy="250" r="30" fill="url(#cap)" filter="url(#dropShadow)"/>
+  <!-- Center Cap ring detail -->
+  <circle cx="250" cy="250" r="24" fill="none" stroke="#2B1D1A" stroke-width="2.5" opacity="0.8" />
+  <circle cx="250" cy="250" r="26" fill="none" stroke="#48332E" stroke-width="1" opacity="0.5" />
+
+</svg>

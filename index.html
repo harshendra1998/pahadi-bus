@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Pahadi Bus — Indian truck driver songs | Horn OK Please</title>
+    <meta
+      name="description"
+      content="Non-stop 90s Bollywood highway bangers — the songs that blast out of Indian trucks. Press play. Horn OK Please."
+    />
+    <meta name="theme-color" content="#0a4a50" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Pahadi Bus" />
+    <meta property="og:description" content="Highway bangers off the back of an Indian truck." />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Yatra+One&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <!-- ── Backdrop ───────────────────────────────────────────────
+         Four painted layers, back to front: the valley photo, the far
+         fog, the bus, the near fog. The photo's road strip is already
+         motion-blurred, so the sense of speed comes from the fog
+         sliding across it and the bus rattling on top — nothing here
+         has to scroll the scenery itself. -->
+    <div class="bg" aria-hidden="true">
+      <div class="bg__scene"></div>
+      <div class="bg__road"></div>
+      <div class="fog fog--far"></div>
+
+      <!-- Body and tyres are separate images on purpose: the wheels stay
+           planted on the road while the body bounces above them on its
+           own, slower rhythm. One image jerking as a unit reads as a
+           sticker being waggled; two read as suspension.
+
+           Tyres come AFTER the body, so they sit in front of it and the
+           whole wheel reads — hub, tread and all — instead of just the
+           crescent below the arch.
+
+           They're placed as a percentage of this box, so the whole rig
+           scales with the viewport and the wheels never drift out of
+           their arches. -->
+      <div class="scene__bus">
+        <div class="bus__glass"></div>
+        <img class="bus__body" src="assets/assets/busmodal.webp" alt="" />
+        <img class="bus__tyre bus__tyre--rear" src="assets/assets/tyre.svg" alt="" />
+        <img class="bus__tyre bus__tyre--front" src="assets/assets/tyre.svg" alt="" />
+      </div>
+
+      <div class="fog fog--near"></div>
+      <div class="bg__scrim"></div>
+    </div>
+
+
+    <!-- The actual sound source: a 1×1 YouTube iframe parked off-screen. -->
+    <div class="yt-host" aria-hidden="true"><div id="yt-player"></div></div>
+
+    <header class="topbar">
+      <div class="clock" id="clock" aria-label="Current time"></div>
+
+      <div class="presence glass" aria-live="polite">
+        <span class="presence__dot" aria-hidden="true"></span>
+        <span id="listeners">42</span>
+        <span class="presence__label">on the highway</span>
+      </div>
+
+      <nav class="links" aria-label="Listen elsewhere">
+        <a
+          class="link glass"
+          id="link-ytm"
+          href="https://music.youtube.com/playlist?list=PLeatb7hupNV_AWUl_7ttbsKeCQh8tF5N4"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Open the playlist on YouTube Music"
+          aria-label="Open the playlist on YouTube Music"
+        >
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
+            <path
+              d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0zm0 19.1A7.1 7.1 0 1 1 12 4.9a7.1 7.1 0 0 1 0 14.2zM9.7 15.5V8.5L15.8 12z"
+            />
+          </svg>
+        </a>
+      </nav>
+    </header>
+
+    <aside class="horns">
+      <button class="horn glass" id="horn" type="button" aria-label="Sound the horn">
+        <span class="horn__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+            <path fill="currentColor" d="M3 9v6h4l5 4V5L7 9H3z" />
+            <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+              <path d="M15.4 8.4a5.2 5.2 0 0 1 0 7.2" />
+              <path d="M18.2 5.6a9.2 9.2 0 0 1 0 12.8" />
+            </g>
+          </svg>
+        </span>
+        <span class="horn__text">
+          <span class="horn__deva" lang="hi">हॉर्न ओके प्लीज़</span>
+          <span class="horn__en">Horn ok pleaseeee</span>
+        </span>
+      </button>
+
+      <!-- Starts hidden and is revealed by JS only where the Fullscreen API
+           actually exists — iOS Safari has no such thing, and a button that
+           does nothing is worse than no button. -->
+      <button class="fs glass" id="fullscreen" type="button" aria-label="Full screen" aria-pressed="false" hidden>
+        <svg class="i-enter" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />
+        </svg>
+        <svg class="i-exit" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5" />
+        </svg>
+      </button>
+    </aside>
+
+    <main>
+      <h1 class="logo" lang="hi">
+        <span class="logo__line">पहाड़ी बस</span>
+        <span class="sr-only" lang="en">Pahadi Bus — Horn OK Please</span>
+      </h1>
+
+      <div class="dock">
+        <section class="list glass" id="list" aria-label="Playlist">
+          <ol id="listItems"></ol>
+        </section>
+
+        <p class="bumper">
+          <span class="bumper__text" id="bumperText" lang="hi" aria-live="polite"></span
+          ><button class="bumper__next" id="bumperNext" type="button" aria-label="Another line">
+            <svg
+              viewBox="0 0 24 24"
+              width="14"
+              height="14"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M20 11.5A8 8 0 1 0 6.3 17.7" />
+              <path d="M20 5.5v6h-6" />
+            </svg>
+          </button>
+        </p>
+
+        <section class="player glass" id="player" aria-label="Player">
+          <div class="disc" id="disc">
+            <div class="disc__ring"><img id="cover" class="disc__art" alt="" src="" /></div>
+            <span class="disc__hub" aria-hidden="true"></span>
+          </div>
+
+          <div class="meta">
+            <p class="meta__title" id="title">Loading the cassette…</p>
+            <p class="meta__artist" id="artist">&nbsp;</p>
+
+            <div
+              class="seek"
+              id="seek"
+              role="slider"
+              tabindex="0"
+              aria-label="Seek"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-valuenow="0"
+            >
+              <div class="seek__rail"><div class="seek__fill" id="seekFill"></div></div>
+              <div class="seek__knob" id="seekKnob"></div>
+            </div>
+            <div class="time"><span id="tCur">0:00</span> / <span id="tDur">0:00</span></div>
+          </div>
+
+          <div class="controls">
+            <button
+              id="shuffle"
+              type="button"
+              class="btn btn--toggle is-on"
+              aria-label="Shuffle"
+              aria-pressed="true"
+            >
+              <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true">
+                <path
+                  d="M17 3l4 4-4 4V8h-2.2l-2.3 3.1 2.3 3.1H17V11l4 4-4 4v-3h-3.2l-2.6-3.5L8.6 15H3v-2h4.6l2.6-3.5L12.8 6H17V3zM3 9h3.4l1.5 2H3V9z"
+                />
+              </svg>
+            </button>
+            <button id="prev" type="button" class="btn" aria-label="Previous track">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+                <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
+              </svg>
+            </button>
+            <button id="play" type="button" class="btn btn--play" aria-label="Play" disabled>
+              <svg class="i-play" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+              <svg class="i-pause" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
+                <path d="M6 5h4v14H6zm8 0h4v14h-4z" />
+              </svg>
+            </button>
+            <button id="next" type="button" class="btn" aria-label="Next track">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+                <path d="M16 6h2v12h-2zm-2 6L5.5 6v12z" />
+              </svg>
+            </button>
+            <button
+              id="listBtn"
+              type="button"
+              class="btn btn--toggle"
+              aria-label="Playlist"
+              aria-expanded="false"
+              aria-controls="list"
+            >
+              <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true">
+                <path d="M3 6h13v2H3zm0 5h13v2H3zm0 5h9v2H3zm15-6.5l4 3-4 3z" />
+              </svg>
+            </button>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- ── Live chat ───────────────────────────────────────────────
+         Not a modal. The log sits in the corner permanently — the last
+         10 lines, which is also all the server keeps. Pressing the
+         button swaps it for the composer in place, so the corner never
+         grows a panel.
+
+         The container ignores pointer events so it can't swallow clicks
+         on the page behind it; the children take them back. -->
+    <div class="chat" id="chat">
+      <ol class="chat__log" id="chatLog" role="log" aria-live="polite" aria-relevant="additions"></ol>
+
+      <button
+        class="chat__toggle glass"
+        id="chatToggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="chatBar"
+      >
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+          <path d="M4 3h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-5 4v-4H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" />
+        </svg>
+        <span>Live chat</span>
+      </button>
+
+      <form class="chat__bar glass" id="chatBar" hidden>
+        <button class="chat__icon" id="chatClose" type="button" aria-label="Close chat">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </button>
+
+        <input
+          class="chat__input"
+          id="chatInput"
+          type="text"
+          maxlength="500"
+          placeholder="Say something…"
+          aria-label="Message"
+          autocomplete="off"
+        />
+
+        <button class="chat__icon chat__send" type="submit" aria-label="Send">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
+            <path d="M3 20l18-8L3 4v6l12 2-12 2z" />
+          </svg>
+        </button>
+      </form>
+    </div>
+
+    <!-- Asked once, on the first send. A native dialog so the focus trap,
+         the backdrop and Esc all come from the platform. -->
+    <dialog class="namebox" id="nameBox">
+      <form id="nameForm" method="dialog">
+        <h2 class="namebox__title" lang="hi">नाम क्या है?</h2>
+        <p class="namebox__hint">Shown next to your messages. Saved on this device.</p>
+        <input
+          class="chat__input"
+          id="nameInput"
+          type="text"
+          maxlength="24"
+          required
+          aria-label="Your name"
+          autocomplete="nickname"
+        />
+        <div class="namebox__row">
+          <button class="namebox__skip" type="button" id="nameCancel">Cancel</button>
+          <button class="namebox__go" type="submit" value="ok">Start chatting</button>
+        </div>
+      </form>
+    </dialog>
+
+    <noscript>
+      <p style="color: #fff; text-align: center; padding: 2rem">
+        This one needs JavaScript — the player is a YouTube iframe under the hood.
+      </p>
+    </noscript>
+
+    <script src="app.js"></script>
+  </body>
+</html>

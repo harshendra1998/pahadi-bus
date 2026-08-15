@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Desi Truck — Indian truck driver songs | Horn OK Please</title>
+    <meta
+      name="description"
+      content="Non-stop 90s Bollywood highway bangers — the songs that blast out of Indian trucks. Press play. Horn OK Please."
+    />
+    <meta name="theme-color" content="#0a4a50" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Desi Truck" />
+    <meta property="og:description" content="Highway bangers off the back of an Indian truck." />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Yatra+One&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <!-- Painted backdrop: two gradient layers we cross-fade on track change. -->
+    <div class="bg" aria-hidden="true">
+      <div class="bg__layer is-on" id="bg1"></div>
+      <div class="bg__layer" id="bg2"></div>
+      <div class="bg__scrim"></div>
+
+      <!-- ── The highway ──────────────────────────────────────────
+           Flat-vector editorial style: no strokes anywhere, shapes
+           read by value contrast alone, cast shadows are their own
+           hard-edged polygons, and a single diagonal light shaft
+           crosses the frame. Depth comes from haze, not perspective.
+           Everything scrolls right-to-left at a different rate. -->
+      <svg
+        class="road"
+        viewBox="0 0 1200 675"
+        preserveAspectRatio="xMidYMax slice"
+        role="presentation"
+      >
+        <defs>
+          <!-- Grain. Rendered once, laid over the whole scene — it's what
+               stops flat fills from looking like clip art. -->
+          <filter id="noise" x="0" y="0" width="100%" height="100%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" seed="7" />
+            <feColorMatrix type="saturate" values="0" />
+          </filter>
+          <!-- Turbulence is generated over a 300px tile and repeated, not
+               over the full 1200×675 frame — same look, a ninth of the
+               pixels to compute. It only costs anything at first paint
+               and on resize (the grained rect never animates), but that
+               is exactly where a full-frame filter shows as a hitch. -->
+          <pattern id="grain" width="300" height="300" patternUnits="userSpaceOnUse">
+            <rect width="300" height="300" filter="url(#noise)" />
+          </pattern>
+
+          <!-- Distance haze: far layers wash toward the sky colour. -->
+          <linearGradient id="haze" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#c99aa0" />
+            <stop offset="1" stop-color="#9d7480" />
+          </linearGradient>
+
+          <linearGradient id="tarmac" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#4c4148" />
+            <stop offset="1" stop-color="#2b2129" />
+          </linearGradient>
+
+          <!-- A town block: two towers, a roofline, punched windows. -->
+          <g id="block">
+            <rect x="0" y="330" width="120" height="150" fill="#b98b8b" />
+            <rect x="0" y="330" width="34" height="150" fill="#a4767a" />
+            <rect x="112" y="352" width="96" height="128" fill="#c9a19a" />
+            <rect x="112" y="352" width="26" height="128" fill="#ad8385" />
+            <rect x="196" y="300" width="88" height="180" fill="#a9787d" />
+            <rect x="196" y="300" width="22" height="180" fill="#8f6069" />
+            <rect x="276" y="368" width="104" height="112" fill="#c6989a" />
+            <rect x="276" y="368" width="24" height="112" fill="#a87b81" />
+            <g fill="#4e3a46" opacity="0.55">
+              <rect x="46" y="352" width="14" height="18" />
+              <rect x="74" y="352" width="14" height="18" />
+              <rect x="46" y="392" width="14" height="18" />
+              <rect x="150" y="376" width="13" height="17" />
+              <rect x="176" y="376" width="13" height="17" />
+              <rect x="232" y="326" width="14" height="19" />
+              <rect x="232" y="368" width="14" height="19" />
+              <rect x="312" y="392" width="14" height="18" />
+              <rect x="342" y="392" width="14" height="18" />
+            </g>
+            <!-- Water tanks and a parapet — the giveaway of an Indian roofline. -->
+            <rect x="206" y="284" width="26" height="18" rx="3" fill="#7c5560" />
+            <rect x="252" y="290" width="18" height="12" rx="3" fill="#7c5560" />
+            <rect x="120" y="344" width="70" height="9" fill="#d8b2a8" />
+          </g>
+
+          <!-- Palm: trunk plus fronds, each frond one filled shape. -->
+          <g id="palm">
+            <path d="M0 480 L6 372 L18 372 L14 480 Z" fill="#6b4f43" />
+            <g fill="#4a6437">
+              <path d="M10 372 Q-40 348 -74 372 Q-36 340 12 362 Z" />
+              <path d="M10 372 Q60 344 96 366 Q56 336 12 360 Z" />
+              <path d="M10 370 Q-24 316 -58 306 Q-14 312 14 358 Z" />
+              <path d="M10 370 Q46 314 82 304 Q38 312 14 358 Z" />
+              <path d="M12 366 Q12 314 26 288 Q22 330 20 364 Z" />
+            </g>
+            <g fill="#5f7d43">
+              <path d="M10 372 Q-30 356 -58 372 Q-28 350 12 364 Z" />
+              <path d="M11 369 Q40 322 68 310 Q34 320 14 359 Z" />
+            </g>
+          </g>
+
+          <!-- Roadside dhaba: the tea stall every highway has one of. -->
+          <g id="dhaba">
+            <rect x="0" y="392" width="150" height="88" fill="#b5563f" />
+            <rect x="0" y="392" width="42" height="88" fill="#8d3b2c" />
+            <path d="M-16 392 L166 392 L154 374 L-4 374 Z" fill="#8f9496" />
+            <path d="M-16 392 L166 392 L160 384 L-10 384 Z" fill="#6f7476" opacity="0.8" />
+            <rect x="58" y="418" width="58" height="62" fill="#2e2028" />
+            <rect x="120" y="410" width="22" height="30" fill="#e6c98f" opacity="0.55" />
+            <!-- Awning, propped on two poles. -->
+            <path d="M150 396 L232 408 L232 418 L150 410 Z" fill="#d8b25a" />
+            <rect x="228" y="414" width="5" height="66" fill="#6b4f43" />
+          </g>
+
+          <g id="pole">
+            <rect x="0" y="250" width="9" height="230" fill="#3a2b33" />
+            <rect x="-20" y="250" width="49" height="9" fill="#3a2b33" />
+            <rect x="-15" y="274" width="39" height="7" fill="#3a2b33" />
+          </g>
+
+          <!-- Even the hubs get painted. Petals around the cap, drawn
+               once and reused by all three wheels. -->
+          <g id="tyre">
+            <circle r="40" fill="#241a20" />
+            <circle r="23" fill="#cdbfae" />
+            <g fill="#d8382c">
+              <circle cx="0" cy="-16" r="6" />
+              <circle cx="16" cy="0" r="6" />
+              <circle cx="0" cy="16" r="6" />
+              <circle cx="-16" cy="0" r="6" />
+            </g>
+            <g fill="#1a7c86">
+              <circle cx="11" cy="-11" r="4" />
+              <circle cx="11" cy="11" r="4" />
+              <circle cx="-11" cy="11" r="4" />
+              <circle cx="-11" cy="-11" r="4" />
+            </g>
+            <circle r="7" fill="#eda42a" />
+          </g>
+
+        </defs>
+
+        <!-- ── Far: hills, then town. Palest, slowest, least detail. -->
+        <g class="scene__hills">
+          <path
+            d="M0 480 L0 430 Q120 392 250 424 Q340 446 430 418 Q540 384 640 420 Q700 442 780 424
+               Q900 392 1030 424 Q1120 446 1210 418 Q1320 384 1420 420 Q1480 442 1560 424
+               Q1680 392 1800 424 L1800 480 Z"
+            fill="url(#haze)"
+            opacity="0.75"
+          />
+        </g>
+
+        <g class="scene__town" opacity="0.9">
+          <use href="#block" x="0" />
+          <use href="#block" x="400" />
+          <use href="#block" x="800" />
+          <use href="#block" x="1200" />
+          <use href="#block" x="1600" />
+        </g>
+
+        <!-- Haze wash: what actually separates the far layer from the mid. -->
+        <rect x="0" y="300" width="1200" height="185" fill="#c99aa0" opacity="0.28" />
+
+        <!-- ── Mid: trees and stalls. -->
+        <!-- Placed on a strict 600-unit period so the scroll loops with no
+             seam. Vary the tile, not the spacing. -->
+        <g class="scene__trees">
+          <use href="#palm" x="90" />
+          <use href="#dhaba" x="300" />
+          <use href="#palm" x="500" />
+          <use href="#palm" x="690" />
+          <use href="#dhaba" x="900" />
+          <use href="#palm" x="1100" />
+          <use href="#palm" x="1290" />
+          <use href="#dhaba" x="1500" />
+          <use href="#palm" x="1700" />
+        </g>
+
+        <g class="scene__poles">
+          <use href="#pole" x="120" />
+          <use href="#pole" x="420" />
+          <use href="#pole" x="720" />
+          <use href="#pole" x="1020" />
+          <use href="#pole" x="1320" />
+          <use href="#pole" x="1620" />
+        </g>
+
+        <!-- ── Road. -->
+        <rect x="0" y="470" width="1200" height="26" fill="#9a7c66" />
+        <rect x="0" y="490" width="1200" height="185" fill="url(#tarmac)" />
+        <rect x="0" y="490" width="1200" height="6" fill="#6b5a5f" />
+        <path class="scene__lane scene__lane--far" d="M-200 516 H1400" stroke="#e8dcc0" stroke-width="5" stroke-dasharray="52 96" opacity="0.3" />
+        <path class="scene__lane" d="M-200 648 H1400" stroke="#e8dcc0" stroke-width="11" stroke-dasharray="96 78" opacity="0.42" />
+
+        <!-- ── The lorry. Cab-over, facing RIGHT, so it drives into the
+             frame and the scenery slides left behind it.
+
+             Configuration follows how these are actually built: a
+             timber stake bed with slatted sides and vertical posts, a
+             tarpaulin lashed over the load, and a flat-front cab
+             carrying a diagonal stripe livery. Light comes from the
+             right, so the cab front is lit and every left-facing plane
+             (the tail, the post edges) gets its own darker fill. -->
+        <g class="scene__truck">
+          <!-- Contact shadow. Hard-edged, not blurred — it's a shape. -->
+          <ellipse cx="580" cy="640" rx="320" ry="15" fill="#1a1219" opacity="0.45" />
+
+          <g class="truck__body">
+            <!-- Chassis rail, seen between the wheels. -->
+            <rect x="292" y="556" width="580" height="20" fill="#241a20" />
+
+            <!-- ── Tarpaulin over the load ──────────────────────────
+                 Bunched, not smooth: the top edge dips between the
+                 lashing points and the folds are their own flat
+                 shapes rather than shading. -->
+            <path
+              d="M280 400 L280 354 Q296 320 332 326 Q368 332 400 316 Q434 300 468 314
+                 Q502 328 536 314 Q572 298 606 314 Q638 328 664 352 L664 400 Z"
+              fill="#3f8fd0"
+            />
+            <g fill="#2a6ba3" opacity="0.55">
+              <path d="M332 326 Q348 362 336 400 L306 400 Q318 358 302 332 Z" />
+              <path d="M468 314 Q480 356 470 400 L444 400 Q454 356 442 318 Z" />
+              <path d="M606 314 Q620 356 612 400 L586 400 Q596 356 582 318 Z" />
+            </g>
+            <path d="M400 316 Q410 356 402 400 L392 400 Q398 356 390 318 Z" fill="#6bb0e0" opacity="0.5" />
+            <!-- The loose corner hanging off the tail. -->
+            <path d="M280 400 L280 476 Q290 456 300 472 L300 400 Z" fill="#2a6ba3" />
+
+            <!-- ── Stake bed ────────────────────────────────────────
+                 Slats as bands, gaps as the dark between them — one
+                 rect per plank rather than a texture. -->
+            <rect x="280" y="396" width="384" height="162" fill="#7a1b12" />
+            <g fill="#d8382c">
+              <rect x="286" y="402" width="372" height="20" />
+              <rect x="286" y="430" width="372" height="20" />
+              <rect x="286" y="458" width="372" height="20" />
+              <rect x="286" y="486" width="372" height="20" />
+              <rect x="286" y="514" width="372" height="20" />
+            </g>
+            <!-- Highlight along the top of each plank: the light is high
+                 and to the right, so plank tops catch it. -->
+            <g fill="#f0733f" opacity="0.55">
+              <rect x="286" y="402" width="372" height="5" />
+              <rect x="286" y="430" width="372" height="5" />
+              <rect x="286" y="458" width="372" height="5" />
+              <rect x="286" y="486" width="372" height="5" />
+              <rect x="286" y="514" width="372" height="5" />
+            </g>
+            <!-- Vertical stake posts. -->
+            <g fill="#9e2419">
+              <rect x="280" y="396" width="14" height="162" />
+              <rect x="372" y="396" width="13" height="162" />
+              <rect x="464" y="396" width="13" height="162" />
+              <rect x="556" y="396" width="13" height="162" />
+              <rect x="650" y="396" width="14" height="162" />
+            </g>
+            <rect x="280" y="538" width="384" height="20" fill="#b52c22" />
+            <!-- Tail face: turned away from the light. -->
+            <rect x="280" y="396" width="10" height="162" fill="#5e1410" />
+
+            <!-- ── Cab ──────────────────────────────────────────────
+                 Flat-fronted and tall, the shape every Indian highway
+                 lorry has. Base coat marigold, stripes over the top. -->
+            <path d="M664 574 V352 q0-16 16-16 h172 q16 0 18 16 l14 108 q2 14 2 28 v46 z" fill="#eda42a" />
+
+            <!-- Stripe livery: flat bands raking up toward the front. -->
+            <path d="M664 574 v-40 l222 -34 v40 z" fill="#2e8b57" />
+            <path d="M664 534 v-36 l218 -34 l4 36 z" fill="#d8382c" />
+            <path d="M664 498 v-32 l214 -32 l4 32 z" fill="#e8622a" />
+            <path d="M664 466 v-26 l211 -26 l3 26 z" fill="#f2d478" />
+
+            <!-- Window: green glass, with the lit corner as its own shape. -->
+            <rect x="684" y="360" width="150" height="82" rx="8" fill="#245c46" />
+            <path d="M834 360 h-52 l-46 82 h52 z" fill="#3d8a68" opacity="0.75" />
+            <rect x="684" y="360" width="150" height="7" rx="4" fill="#c07d15" />
+            <!-- Door shut line and handle. -->
+            <rect x="838" y="352" width="4" height="200" fill="#c07d15" opacity="0.75" />
+            <rect x="800" y="470" width="26" height="7" rx="3" fill="#7a4e08" />
+
+            <!-- Roof, front face, lamps and bumper. -->
+            <rect x="676" y="336" width="180" height="12" rx="6" fill="#f2d478" />
+            <path d="M886 460 l-6 -48 q-2 -14 -14 -16 v64 z" fill="#c07d15" opacity="0.5" />
+            <rect x="854" y="486" width="32" height="24" rx="5" fill="#f7e39a" />
+            <rect x="846" y="540" width="42" height="24" rx="5" fill="#b9bcbe" />
+            <rect x="846" y="540" width="42" height="8" rx="4" fill="#dfe2e3" />
+
+            <!-- Mirror, out on its long bracket — the detail that reads
+                 as "lorry" more than any other single part. -->
+            <rect x="886" y="368" width="26" height="6" rx="3" fill="#8f9496" />
+            <rect x="904" y="346" width="12" height="50" rx="5" fill="#b9bcbe" />
+            <rect x="904" y="346" width="5" height="50" rx="3" fill="#7d8385" />
+
+            <!-- Wheel arches, cut over each axle. -->
+            <g fill="#9e2419">
+              <path d="M336 558 a44 40 0 0 1 88 0 z" />
+              <path d="M426 558 a44 40 0 0 1 88 0 z" />
+            </g>
+            <path d="M756 558 a46 42 0 0 1 92 0 z" fill="#c07d15" />
+          </g>
+
+          <!-- Two nested groups on purpose: the outer one holds the
+               position, the inner one spins. A CSS transform replaces the
+               transform attribute outright rather than adding to it, so
+               animating this group directly would throw every wheel back
+               to the origin and spin it there. -->
+          <g transform="translate(380 596)"><g class="truck__wheel"><use href="#tyre" /></g></g>
+          <g transform="translate(470 596)"><g class="truck__wheel"><use href="#tyre" /></g></g>
+          <g transform="translate(802 596)"><g class="truck__wheel"><use href="#tyre" /></g></g>
+        </g>
+
+        <!-- ── The light shaft. The signature move of this style: one
+             hard-edged translucent wedge raking across everything,
+             with the shadow side as its own flat polygon. -->
+             Painted in normal blend, not overlay/multiply: the sky is
+             transparent here (the CSS gradient shows through), and a
+             blend mode over transparency does nothing — the shaft would
+             simply vanish above the rooftops. -->
+        <path d="M1200 0 L1200 675 L470 675 L920 0 Z" fill="#ffd9a0" opacity="0.13" />
+        <path d="M0 675 L0 250 L360 0 L560 0 L120 675 Z" fill="#2a1c2e" opacity="0.24" />
+
+        <!-- ── Grain, over the lot. -->
+        <rect x="0" y="0" width="1200" height="675" fill="url(#grain)" opacity="0.16" style="mix-blend-mode: overlay" />
+      </svg>
+    </div>
+
+    <!-- The actual sound source: a 1×1 YouTube iframe parked off-screen. -->
+    <div class="yt-host" aria-hidden="true"><div id="yt-player"></div></div>
+
+    <header class="topbar">
+      <div class="clock" id="clock" aria-label="Current time"></div>
+
+      <div class="presence glass" aria-live="polite">
+        <span class="presence__dot" aria-hidden="true"></span>
+        <span id="listeners">42</span>
+        <span class="presence__label">on the highway</span>
+      </div>
+
+      <nav class="links" aria-label="Listen elsewhere">
+        <a
+          class="link glass"
+          id="link-ytm"
+          href="https://music.youtube.com/playlist?list=PLeatb7hupNV_AWUl_7ttbsKeCQh8tF5N4"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Open the playlist on YouTube Music"
+          aria-label="Open the playlist on YouTube Music"
+        >
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
+            <path
+              d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0zm0 19.1A7.1 7.1 0 1 1 12 4.9a7.1 7.1 0 0 1 0 14.2zM9.7 15.5V8.5L15.8 12z"
+            />
+          </svg>
+        </a>
+      </nav>
+    </header>
+
+    <aside class="horns">
+      <button class="horn glass" id="horn" type="button" aria-label="Sound the horn">
+        <span class="horn__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+            <path fill="currentColor" d="M3 9v6h4l5 4V5L7 9H3z" />
+            <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+              <path d="M15.4 8.4a5.2 5.2 0 0 1 0 7.2" />
+              <path d="M18.2 5.6a9.2 9.2 0 0 1 0 12.8" />
+            </g>
+          </svg>
+        </span>
+        <span class="horn__text">
+          <span class="horn__deva" lang="hi">हॉर्न ओके प्लीज़</span>
+          <span class="horn__en">Horn ok pleaseeee</span>
+        </span>
+      </button>
+    </aside>
+
+    <main>
+      <h1 class="logo" lang="hi">
+        <span class="logo__line">देसी</span>
+        <span class="logo__line">ट्रक</span>
+        <span class="sr-only" lang="en">Desi Truck — Horn OK Please</span>
+      </h1>
+
+      <div class="dock">
+        <section class="list glass" id="list" aria-label="Playlist">
+          <ol id="listItems"></ol>
+        </section>
+
+        <p class="bumper">
+          <span class="bumper__text" id="bumperText" lang="hi" aria-live="polite"></span
+          ><button class="bumper__next" id="bumperNext" type="button" aria-label="Another line">
+            <svg
+              viewBox="0 0 24 24"
+              width="14"
+              height="14"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M20 11.5A8 8 0 1 0 6.3 17.7" />
+              <path d="M20 5.5v6h-6" />
+            </svg>
+          </button>
+        </p>
+
+        <section class="player glass" id="player" aria-label="Player">
+          <div class="disc" id="disc">
+            <div class="disc__ring"><img id="cover" class="disc__art" alt="" src="" /></div>
+            <span class="disc__hub" aria-hidden="true"></span>
+          </div>
+
+          <div class="meta">
+            <p class="meta__title" id="title">Loading the cassette…</p>
+            <p class="meta__artist" id="artist">&nbsp;</p>
+
+            <div
+              class="seek"
+              id="seek"
+              role="slider"
+              tabindex="0"
+              aria-label="Seek"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-valuenow="0"
+            >
+              <div class="seek__rail"><div class="seek__fill" id="seekFill"></div></div>
+              <div class="seek__knob" id="seekKnob"></div>
+            </div>
+            <div class="time"><span id="tCur">0:00</span> / <span id="tDur">0:00</span></div>
+          </div>
+
+          <div class="controls">
+            <button
+              id="shuffle"
+              type="button"
+              class="btn btn--toggle is-on"
+              aria-label="Shuffle"
+              aria-pressed="true"
+            >
+              <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true">
+                <path
+                  d="M17 3l4 4-4 4V8h-2.2l-2.3 3.1 2.3 3.1H17V11l4 4-4 4v-3h-3.2l-2.6-3.5L8.6 15H3v-2h4.6l2.6-3.5L12.8 6H17V3zM3 9h3.4l1.5 2H3V9z"
+                />
+              </svg>
+            </button>
+            <button id="prev" type="button" class="btn" aria-label="Previous track">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+                <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
+              </svg>
+            </button>
+            <button id="play" type="button" class="btn btn--play" aria-label="Play" disabled>
+              <svg class="i-play" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+              <svg class="i-pause" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
+                <path d="M6 5h4v14H6zm8 0h4v14h-4z" />
+              </svg>
+            </button>
+            <button id="next" type="button" class="btn" aria-label="Next track">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+                <path d="M16 6h2v12h-2zm-2 6L5.5 6v12z" />
+              </svg>
+            </button>
+            <button
+              id="listBtn"
+              type="button"
+              class="btn btn--toggle"
+              aria-label="Playlist"
+              aria-expanded="false"
+              aria-controls="list"
+            >
+              <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true">
+                <path d="M3 6h13v2H3zm0 5h13v2H3zm0 5h9v2H3zm15-6.5l4 3-4 3z" />
+              </svg>
+            </button>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- ── Live chat ───────────────────────────────────────────────
+         Bottom right, opposite the horn. Nothing here persists: the
+         server keeps the last 50 lines in memory and forgets them
+         when it restarts. -->
+    <button
+      class="chat__toggle glass"
+      id="chatToggle"
+      type="button"
+      aria-expanded="false"
+      aria-controls="chat"
+    >
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+        <path d="M4 3h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-5 4v-4H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" />
+      </svg>
+      <span>Live chat</span>
+      <span class="chat__badge" id="chatBadge" hidden>0</span>
+    </button>
+
+    <section class="chat glass" id="chat" aria-label="Live chat" hidden>
+      <header class="chat__head">
+        <span class="chat__dot" id="chatDot" aria-hidden="true"></span>
+        <strong>Live chat</strong>
+        <span class="chat__state" id="chatState">connecting…</span>
+        <button class="chat__close" id="chatClose" type="button" aria-label="Close chat">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </button>
+      </header>
+
+      <ol class="chat__log" id="chatLog" role="log" aria-live="polite" aria-relevant="additions"></ol>
+
+      <form class="chat__form" id="chatForm">
+        <input
+          class="chat__name"
+          id="chatName"
+          type="text"
+          maxlength="24"
+          aria-label="Your name"
+          autocomplete="nickname"
+        />
+        <div class="chat__row">
+          <input
+            class="chat__input"
+            id="chatInput"
+            type="text"
+            maxlength="500"
+            placeholder="Say something…"
+            aria-label="Message"
+            autocomplete="off"
+          />
+          <button class="chat__send" type="submit" aria-label="Send">
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true">
+              <path d="M3 20l18-8L3 4v6l12 2-12 2z" />
+            </svg>
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <noscript>
+      <p style="color: #fff; text-align: center; padding: 2rem">
+        This one needs JavaScript — the player is a YouTube iframe under the hood.
+      </p>
+    </noscript>
+
+    <script src="app.js"></script>
+  </body>
+</html>

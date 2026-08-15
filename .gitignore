@@ -1,0 +1,9 @@
+node_modules/
+server.log
+*.log
+.firebase/
+
+# The source PNGs are deliberately NOT ignored. They are the originals the
+# .webp files were encoded from, and this repo is the only backup of them.
+# firebase.json already excludes them from the upload, so they cost the
+# visitor nothing — they just don't get deployed.
