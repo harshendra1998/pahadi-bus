@@ -941,6 +941,17 @@ main {
   gap: 0.3rem;
   max-height: min(46vh, 340px);
   overflow: hidden;
+  transition: opacity 0.6s ease;
+}
+
+/* Closing the composer means done reading, so the log gets out of the way
+   — but not instantly, or the last line you were mid-sentence on vanishes
+   under your cursor. The 5s is a transition-delay rather than a JS timer:
+   reopening removes the class and the delay goes with it, so the log comes
+   straight back instead of racing a pending setTimeout. */
+.chat.is-idle .chat__log {
+  opacity: 0;
+  transition-delay: 5s;
 }
 
 /* Each line carries its own backing. One shared panel would be the modal
@@ -1009,6 +1020,32 @@ main {
 
 .chat__toggle:hover {
   transform: translateY(-2px);
+}
+
+/* Status light. Red until the socket opens, so a dead connection looks
+   dead rather than looking like nobody has said anything yet. */
+.chat__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ff6b5a;
+  transition: background 0.3s;
+}
+
+.chat.is-live .chat__dot {
+  background: #4ade80;
+  animation: dot-pulse 2s ease-out infinite;
+}
+
+/* Ring expands out of the dot and fades. box-shadow rather than a second
+   element, so the halo costs no markup and no layout. */
+@keyframes dot-pulse {
+  from {
+    box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7);
+  }
+  to {
+    box-shadow: 0 0 0 7px rgba(74, 222, 128, 0);
+  }
 }
 
 .chat__toggle[hidden],

@@ -70,8 +70,8 @@ const MAX_TEXT = 500;
 const MAX_NAME = 24;
 const BACKLOG = 10;
 /* Overridable so the test can exercise the real limiter at a speed a test
-   can wait for. Nothing sets it in production, where 30s is the rule. */
-const COOLDOWN = Number(process.env.CHAT_COOLDOWN_MS ?? 30_000);
+   can wait for. Nothing sets it in production, where 10s is the rule. */
+const COOLDOWN = Number(process.env.CHAT_COOLDOWN_MS ?? 10_000);
 
 const CONTROL_CHARS = new RegExp("[\u0000-\u001f\u007f]", "g");
 
@@ -82,12 +82,22 @@ let seq = 0;
 
 /* One message per IP per 30s. Keyed by IP, not by socket — a socket is
    free to open, so per-socket limiting is bypassed by reconnecting.
-   ponytail: behind a reverse proxy every client shares the proxy's
-   address and so shares one quota. Read a trusted forwarded-for header
-   here if it ever sits behind one — but only then, since a client can
-   set that header itself when it doesn't. */
+
+   Behind a proxy the socket's own address is the proxy's, the same for
+   every visitor, so the limit would be one message per 30s for the whole
+   site. The client's real address is in x-forwarded-for — but only when a
+   proxy actually put it there. Direct clients set that header themselves,
+   and trusting it then means anyone bypasses the limit with a fresh fake
+   value per message. So: trust it only where we know we're proxied.
+   Render sets RENDER=true itself; TRUST_PROXY covers anywhere else.
+
+   Leftmost entry: proxies append, so the first is the original client. */
+const TRUST_PROXY = Boolean(process.env.TRUST_PROXY ?? process.env.RENDER);
 const lastSent = new Map();
-const ipOf = (req) => String(req.socket.remoteAddress ?? '').replace(/^::ffff:/, '');
+const ipOf = (req) => {
+  const fwd = TRUST_PROXY && String(req.headers['x-forwarded-for'] ?? '').split(',')[0].trim();
+  return (fwd || String(req.socket.remoteAddress ?? '')).replace(/^::ffff:/, '');
+};
 
 /* Once the socket lives on its own host it answers the whole internet, so
    say which pages may open it. This list is only for CROSS-origin pages —
@@ -202,11 +212,14 @@ const heartbeat = setInterval(() => {
 }, 30_000);
 
 /* lastSent would otherwise grow one entry per IP forever. An entry older
-   than the cooldown can never block anything, so it is safe to drop. */
+   than the cooldown can never block anything, so it is safe to drop.
+   Swept no faster than once a minute — at a short cooldown, sweeping every
+   window is many pointless walks for every one that frees anything. Late
+   collection costs a few stale entries, nothing else. */
 const prune = setInterval(() => {
   const cutoff = Date.now() - COOLDOWN;
   for (const [ip, at] of lastSent) if (at < cutoff) lastSent.delete(ip);
-}, COOLDOWN);
+}, Math.max(COOLDOWN, 60_000));
 
 wss.on('close', () => {
   clearInterval(heartbeat);

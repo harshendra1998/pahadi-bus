@@ -34,6 +34,7 @@ const el = {
   chatClose: $('chatClose'),
   chatBar: $('chatBar'),
   chatLog: $('chatLog'),
+  chatDot: $('chatDot'),
   chatInput: $('chatInput'),
   nameBox: $('nameBox'),
   nameForm: $('nameForm'),
@@ -339,6 +340,13 @@ function setNote(text) {
   el.chatLog.append(li);
 }
 
+/* The dot on the toggle. Driven by the socket, not by having ever
+   connected, so a dropped link goes red and the reconnect turns it back. */
+function setLive(live) {
+  el.chat.classList.toggle('is-live', live);
+  el.chatDot.setAttribute('aria-label', live ? 'Live' : 'Offline');
+}
+
 /* In production the page comes from Firebase Hosting, which is static and
    cannot carry a WebSocket, so the socket lives on a separate host. Set
    this to your Render URL, hostname only, no protocol.
@@ -358,6 +366,7 @@ function connectChat() {
   chat.ws.addEventListener('open', () => {
     chat.retry = 0;
     setNote('');
+    setLive(true);
   });
 
   chat.ws.addEventListener('message', (e) => {
@@ -380,11 +389,14 @@ function connectChat() {
     } else if (msg.type === 'presence') {
       el.listeners.textContent = msg.count;
     } else if (msg.type === 'slow') {
-      setNote(`एक मिनट — ${msg.retryIn}s बाद फिर भेजें।`);
+      // "एक मिनट" read fine at a 30s limit; at 2s it now says a minute
+      // while the number next to it says 2.
+      setNote(`ज़रा रुकें — ${msg.retryIn}s बाद फिर भेजें।`);
     }
   });
 
   chat.ws.addEventListener('close', () => {
+    setLive(false);
     setNote('कनेक्ट हो रहा है…');
     const wait = Math.min(1000 * 2 ** chat.retry++, 15000);
     setTimeout(connectChat, wait);
@@ -399,6 +411,10 @@ function openComposer(open) {
   el.chatToggle.hidden = open;
   el.chatBar.hidden = !open;
   el.chatToggle.setAttribute('aria-expanded', String(open));
+  /* Only closing arms the fade — the class is absent at load, so the log
+     is readable from the start without anyone having to open the composer
+     to see it. CSS owns the 5s; see .chat.is-idle. */
+  el.chat.classList.toggle('is-idle', !open);
   if (open) el.chatInput.focus();
   else el.chatToggle.focus();
 }

@@ -12,6 +12,9 @@ process.env.ALLOWED_ORIGINS = 'https://pahadi-bus.web.app';
    the whole run would ever land. */
 const COOLDOWN = 120;
 process.env.CHAT_COOLDOWN_MS = String(COOLDOWN);
+/* Stand in for Render. Without this the server ignores x-forwarded-for,
+   which is what the last block below is about. */
+process.env.TRUST_PROXY = '1';
 
 const { server, wss } = await import('./server.js');
 
@@ -23,8 +26,8 @@ const gap = () => new Promise((r) => setTimeout(r, COOLDOWN + 40));
    can emit 'open' and that first 'message' in the same tick — so a helper
    that attaches its listener in a microtask after 'open' misses it and
    then waits forever. Buffer first, match later. */
-function client() {
-  const ws = new WebSocket('ws://localhost:8199');
+function client(headers) {
+  const ws = new WebSocket('ws://localhost:8199', headers ? { headers } : {});
   const seen = [];
   const waiting = [];
 
@@ -194,6 +197,39 @@ assert.equal(
   'refused',
   'lookalike suffix must not pass',
 );
+
+/* Rate limit is per visitor, not per site. Behind a proxy every socket
+   shares one remote address, so keying on that alone means the first
+   person to speak silences everybody else for the whole window. Two
+   clients, two forwarded addresses, no gap between them: both must land. */
+const p = client({ 'X-Forwarded-For': '203.0.113.7' });
+const q = client({ 'X-Forwarded-For': '198.51.100.9, 203.0.113.1' });
+await p.ready;
+await q.ready;
+await p.want('hello');
+await q.want('hello');
+
+p.send(JSON.stringify({ type: 'chat', name: 'p', text: 'first' }));
+q.send(JSON.stringify({ type: 'chat', name: 'q', text: 'second' }));
+assert.equal(
+  (await q.want((m) => m.type === 'chat' && m.text === 'second')).name,
+  'q',
+  'one visitor speaking must not rate-limit another',
+);
+assert.ok(!q.seen.some((m) => m.type === 'slow'), 'and must not be told to slow down');
+
+// Same forwarded client twice over: still one quota, or the limit is a
+// no-op that anyone bypasses by opening a second socket.
+const r = client({ 'X-Forwarded-For': '203.0.113.7' });
+await r.ready;
+await r.want('hello');
+r.send(JSON.stringify({ type: 'chat', name: 'r', text: 'again' }));
+assert.equal(typeof (await r.want('slow')).retryIn, 'number', 'same address shares a quota');
+
+await gap();
+p.close();
+q.close();
+r.close();
 
 /* Static routes. The interesting half is what must NOT be served: ROOT
    holds the server and its tests alongside the site, so a guard that only
