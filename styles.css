@@ -116,25 +116,36 @@ body {
    panorama.webp is background_panaromic.jpg made tileable: its own two
    edges differed by 8/255, so the last 300px were dropped and cross-faded
    back over the first 300px. The wrap is now an ordinary adjacent-column
-   step (1.3/255, against a 1.1 noise floor). Then the top 15% was cropped
-   away — it was empty sky, and with the layer scaled to viewport height
-   every row of sky kept is a row the peaks don't get. Re-crop the source
-   and the tile has to be rebuilt: the aspect below is baked in.
+   step (1.2/255, against a 1.0 noise floor). Rebuild the tile and --ratio
+   below has to be re-measured with it.
 
-   Sized `auto 100%` rather than `cover`: at 2.48:1 cover resolves to
+   Sized `auto 100%` rather than `cover`: at 2.11:1 cover resolves to
    height in any real viewport anyway, so this is the same framing, and
-   one tile is exactly 2.4834 × 100vh wide. */
+   the tile width follows from the height by one multiply.
+
+   ── The two knobs ──
+   --sky-cut  how much of the image's empty top to hide. The layer is that
+              much TALLER than the viewport and hangs off the top edge,
+              where .bg's `contain: strict` clips it. Bigger = less sky,
+              bigger peaks. 0 shows the whole photo. Cropping the file
+              instead would work too, but then every re-crop means new
+              art and a new --ratio; this is one number, live-tunable.
+   240s       one tile of travel. Bigger = slower. */
 .bg__scene {
-  --tile: 248.34vh; /* 2836 / 1142, one whole tile at `auto 100%` */
+  --sky-cut: 38.6vh;
+  --ratio: 2.11012; /* 2836 / 1344 */
+
+  --h: calc(100vh + var(--sky-cut));
+  --tile: calc(var(--ratio) * var(--h)); /* one whole tile at `auto 100%` */
 
   position: absolute;
   left: 0;
-  top: 0;
   bottom: 0;
   right: calc(-1 * var(--tile)); /* one tile of runway past the edge */
+  height: var(--h);
   background: url('assets/assets/panorama.webp') repeat-x left bottom / auto 100%;
   will-change: transform;
-  animation: scroll 240s linear infinite;
+  animation: scroll 340s linear infinite;
 }
 
 /* ── The road ─────────────────────────────────────────────────────
@@ -176,7 +187,7 @@ body {
 
 /* ── Fog ──────────────────────────────────────────────────────────
    Two tiled bands drifting left at different rates. Fastest layers in the
-   scene, against the road at 20s and the mountains at 240s.
+   scene, against the road at 20s and the mountains at 240s per tile.
 
    Each band is one tile WIDER than the viewport (right: -tile) and
    travels exactly one tile, so the loop lands on an identical pixel
