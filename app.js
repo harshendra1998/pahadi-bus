@@ -237,39 +237,33 @@ el.seek.addEventListener('keydown', (e) => {
 });
 
 /* ── Horn ──────────────────────────────────────────────────────── */
-let ac = null;
+const horn = new Audio('assets/assets/BusHorn.mp3');
+horn.preload = 'auto';
+horn.volume = 0.7;
+
+/* The song's volume before we ducked it, or null when nothing is ducked.
+   Held across honks so a second press mid-blast doesn't save the already
+   ducked level as the one to go back to. */
+let preHonk = null;
+
+/* Restored on the horn's own `ended` rather than a timer: the clip decides
+   how long it is, and a re-press restarts it without firing this, so the
+   song comes back when the horn actually stops instead of one honk early. */
+horn.addEventListener('ended', () => {
+  if (preHonk !== null) yt?.setVolume?.(preHonk);
+  preHonk = null;
+});
 
 function honk() {
-  ac ??= new (window.AudioContext || window.webkitAudioContext)();
-  ac.resume();
-
-  const now = ac.currentTime;
-  const out = ac.createGain();
-  const filter = ac.createBiquadFilter();
-  filter.type = 'lowpass';
-  filter.frequency.value = 2200;
-  filter.connect(out).connect(ac.destination);
-
-  out.gain.setValueAtTime(0.0001, now);
-  out.gain.exponentialRampToValueAtTime(0.35, now + 0.04);
-  out.gain.setValueAtTime(0.35, now + 0.55);
-  out.gain.exponentialRampToValueAtTime(0.0001, now + 0.9);
-
-  for (const f of [277, 415]) {
-    const osc = ac.createOscillator();
-    osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(f, now);
-    osc.frequency.linearRampToValueAtTime(f * 0.94, now + 0.9);
-    osc.connect(filter);
-    osc.start(now);
-    osc.stop(now + 0.95);
-  }
-
-  if (yt?.getVolume) {
-    const vol = yt.getVolume();
-    yt.setVolume(Math.round(vol * 0.35));
-    setTimeout(() => yt.setVolume(vol), 900);
-  }
+  horn.currentTime = 0;
+  /* Duck only once playback is real. Before the first gesture the browser
+     refuses to play, and ducking then would strand the song quiet forever
+     waiting for an `ended` that never comes. */
+  horn.play().then(() => {
+    if (!yt?.getVolume || preHonk !== null) return;
+    preHonk = yt.getVolume();
+    yt.setVolume(Math.round(preHonk * 0.35));
+  }, () => {});
 
   el.horn.classList.add('is-honking');
   setTimeout(() => el.horn.classList.remove('is-honking'), 160);
