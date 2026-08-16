@@ -109,14 +109,32 @@ body {
   contain: strict;
 }
 
-/* The photo already carries the sky, the valley and a motion-blurred
-   road strip along its bottom quarter. Anchored bottom-centre so that
-   strip stays glued to the bottom edge and a short viewport eats sky
-   rather than road. */
+/* The mountains, scrolling. Slowest layer in the scene — far things move
+   least, so this is what makes the road and fog read as speed rather than
+   as a treadmill under a painted backdrop.
+
+   panorama.webp is background_panaromic.jpg made tileable: its own two
+   edges differed by 8/255, so the last 300px were dropped and cross-faded
+   back over the first 300px. The wrap is now an ordinary adjacent-column
+   step (1.3/255, against a 1.1 noise floor). Then the top 15% was cropped
+   away — it was empty sky, and with the layer scaled to viewport height
+   every row of sky kept is a row the peaks don't get. Re-crop the source
+   and the tile has to be rebuilt: the aspect below is baked in.
+
+   Sized `auto 100%` rather than `cover`: at 2.48:1 cover resolves to
+   height in any real viewport anyway, so this is the same framing, and
+   one tile is exactly 2.4834 × 100vh wide. */
 .bg__scene {
+  --tile: 248.34vh; /* 2836 / 1142, one whole tile at `auto 100%` */
+
   position: absolute;
-  inset: 0;
-  background: url('assets/assets/background.webp') center bottom / cover no-repeat;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: calc(-1 * var(--tile)); /* one tile of runway past the edge */
+  background: url('assets/assets/panorama.webp') repeat-x left bottom / auto 100%;
+  will-change: transform;
+  animation: scroll 240s linear infinite;
 }
 
 /* ── The road ─────────────────────────────────────────────────────
@@ -134,28 +152,31 @@ body {
    why the travel is 2 viewport widths, not 1: one tile is two strips. */
 .bg__road {
   --road-h: max(11.28vw, 23.65vh);
-  --road-tile: max(200vw, 419.3vh); /* = 17.73 × --road-h, one whole tile */
+  --tile: max(200vw, 419.3vh); /* = 17.73 × --road-h, one whole tile */
 
   position: absolute;
   left: 0;
   bottom: 0;
-  right: calc(-1 * var(--road-tile)); /* one tile of runway past the edge */
+  right: calc(-1 * var(--tile)); /* one tile of runway past the edge */
   height: var(--road-h);
   z-index: 2;
   background: url('assets/assets/road.webp') repeat-x left bottom / auto 100%;
   will-change: transform;
-  animation: road-scroll 20s linear infinite;
+  animation: scroll 20s linear infinite;
 }
 
-@keyframes road-scroll {
+/* Every scrolling band works the same way — travel exactly one tile, land
+   on an identical pixel column — so they share one keyframe and differ
+   only in --tile and duration. */
+@keyframes scroll {
   to {
-    transform: translateX(calc(-1 * var(--road-tile)));
+    transform: translateX(calc(-1 * var(--tile)));
   }
 }
 
 /* ── Fog ──────────────────────────────────────────────────────────
-   Two tiled bands drifting left at different rates — the parallax that
-   sells speed now that no scenery scrolls.
+   Two tiled bands drifting left at different rates. Fastest layers in the
+   scene, against the road at 20s and the mountains at 240s.
 
    Each band is one tile WIDER than the viewport (right: -tile) and
    travels exactly one tile, so the loop lands on an identical pixel
@@ -216,8 +237,8 @@ body {
    the arch openings sit at 22%/81% across and 69% down. Swap the bus
    PNG and all six numbers below have to be re-measured. */
 .scene__bus {
-  /* Wheel speed. No-slip against the road works out at 2.88s: --road-tile
-     (200vw) passes in 20s = 10vw/s, and a wheel is 14.35% of a 64vw bus =
+  /* Wheel speed. No-slip against the road works out at 2.88s: the road's
+     --tile (200vw) passes in 20s = 10vw/s, and a wheel is 14.35% of a 64vw bus =
      9.18vw across, so one circumference is π × 9.18 = 28.8vw.
      This runs at 1.38s — a bit over 2× that, deliberately, because the
      road is heavily motion-blurred and true-rate wheels read as dawdling
@@ -377,6 +398,7 @@ body {
    motion. Honour the setting: the art stays, the movement stops. */
 @media (prefers-reduced-motion: reduce) {
   .fog,
+  .bg__scene,
   .bg__road,
   .bus__body,
   .bus__glass,
